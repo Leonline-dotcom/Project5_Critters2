@@ -2,21 +2,27 @@
  * CRITTERS Critter.java
  * EE422C Project 5 submission by
  * Replace <...> with your actual data.
- * <Student1 Name>
- * <Student1 EID>
- * <Student1 5-digit Unique No.>
- * <Student2 Name>
- * <Student2 EID>
- * <Student2 5-digit Unique No.>
+ * <Leon Shaji>
+ * <LS44376>
+ * <17150>
+ * <Andrew Rentz>
+ * <atr983>
+ * <17150>
  * Slip days used: <0>
- * Spring 2019
+ * Spring 2023
  */
 
 package assignment5;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Arrays;
+
+import java.lang.Math;
 
 /*
  * See the PDF for descriptions of the methods and fields in this
@@ -79,14 +85,21 @@ public abstract class Critter {
 	/* END --- NEW FOR PROJECT 5
 			rest is unchanged from Project 4 */
 
-    private int energy = 0;
-
-    private int x_coord;
-    private int y_coord;
-
-    private static List<Critter> population = new ArrayList<Critter>();
-    private static List<Critter> babies = new ArrayList<Critter>();
-
+            private int energy;
+            private int x_coord;
+            private int y_coord;
+            private Point position;
+            private boolean ateSensuBean = false;
+        
+            private static String[][] grid = new String[Params.WORLD_WIDTH][Params.WORLD_HEIGHT]; 
+        
+            private static List<Critter> population = new ArrayList<Critter>();
+            private static List<Critter> babies = new ArrayList<Critter>();
+            private static ArrayList<Critter> deadList = new ArrayList<>();
+            
+            private static Map<Point, HashSet<Critter>> critterLocation = new HashMap<>(); //name is not exactly correct, a point with values could only contain 1 critter, thus no conflict
+            private static HashSet<Point> ConflictCoords = new HashSet<>(); //this ONLY contains coords with 2 or more critters
+        
     /* Gets the package name.  This assumes that Critter and its
      * subclasses are all in the same package. */
     private static String myPackage;
@@ -159,12 +172,11 @@ public abstract class Critter {
     }
 
     protected final void walk(int direction) {
-        // TODO: Complete this method
+        this.position.translate(direction, 1);
     }
 
     protected final void run(int direction) {
-        // TODO: Complete this method
-
+        this.position.translate(direction, 2);
     }
 
     protected final void reproduce(Critter offspring, int direction) {

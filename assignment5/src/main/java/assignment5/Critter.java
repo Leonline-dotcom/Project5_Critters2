@@ -180,7 +180,13 @@ public abstract class Critter {
     }
 
     protected final void reproduce(Critter offspring, int direction) {
-        // TODO: Complete this method
+        if(this.energy >= Params.MIN_REPRODUCE_ENERGY){
+            offspring.position = new Point(this.position);
+            offspring.energy = (int) Math.floorDiv(this.energy, 2) + Params.WALK_ENERGY_COST;
+            offspring.walk(direction);
+            babies.add(offspring);
+            this.energy = (int)Math.ceil((double)this.energy/(double)2); //modified this line, ceilDiv not in Math or something like that
+        }
     }
 
     /**

@@ -9,6 +9,19 @@ public class Point {
         this.y = y;
     }
 
+    public Point(Point p){
+        this.x = p.getX();
+        this.y = p.gety();
+    }
+
+    public int getX(){
+        return x;
+    }
+
+    public int gety(){
+        return y;
+    }
+
     public void translate(int direction, int stepAmount){
 
         switch (direction) {

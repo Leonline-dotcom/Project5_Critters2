@@ -129,7 +129,26 @@ public abstract class Critter {
      */
     public static void createCritter(String critter_class_name)
             throws InvalidCritterException {
-        // TODO: Complete this method
+        // TODO: Modded Point class so test it out
+        try{
+    		Class CritterClass = Class.forName(myPackage+"."+critter_class_name);
+			Critter NewCritter = (Critter) CritterClass.newInstance(); 
+			NewCritter.x_coord = Critter.getRandomInt(Params.WORLD_WIDTH);
+			NewCritter.y_coord = Critter.getRandomInt(Params.WORLD_HEIGHT);
+            NewCritter.position = new Point(NewCritter.x_coord, NewCritter.y_coord);
+			NewCritter.energy = Params.START_ENERGY;
+			population.add(NewCritter);
+			if(!critterLocation.containsKey(NewCritter.position)) {
+			critterLocation.put(NewCritter.position, new HashSet<Critter>());
+			}
+			critterLocation.get(NewCritter.position).add(NewCritter);
+			// TODO Auto-generated catch block
+		} 
+    	catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			throw new InvalidCritterException(critter_class_name);
+		}
+    	
     }
 
     /**

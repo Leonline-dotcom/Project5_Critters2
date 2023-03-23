@@ -169,7 +169,10 @@ public abstract class Critter {
      * Clear the world of all critters, dead and alive
      */
     public static void clearWorld() {
-        // TODO: Complete this method
+        clearGrid();
+        population.clear();
+        babies.clear();
+        critterLocation.clear();
     }
 
     public static void worldTimeStep() {
@@ -264,5 +267,12 @@ public abstract class Critter {
         protected static List<Critter> getBabies() {
             return babies;
         }
+    }
+
+    private static void clearGrid(){
+        for( String[] row : grid){
+            Arrays.fill(row, " ");
+        }
+
     }
 }

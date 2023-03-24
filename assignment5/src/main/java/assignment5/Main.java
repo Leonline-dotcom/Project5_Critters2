@@ -30,7 +30,7 @@ public class Main extends Application {
         Pane gameWindow = new Pane();
 
         // Create a canvas for the game view
-        Canvas canvas = new Canvas(600, 400);
+        Canvas canvas = new Canvas(1020, 1020);
 
         // Get the graphics context for the canvas
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -55,16 +55,16 @@ public class Main extends Application {
         // Draw the fence around the edge of the game window
         gc.setStroke(Color.PERU);
         gc.setLineWidth(10);
-        gc.strokeRect(0, 0, 600, 400);
-        for (int i = 10; i < 590; i += 20) {
+        gc.strokeRect(0, 0, 1020, 1020);
+        for (int i = 10; i < 1010; i += 20) {
             gc.setFill(Color.BURLYWOOD);
             gc.fillRect(i, 0, 10, 10);
-            gc.fillRect(i, 390, 10, 10);
+            gc.fillRect(i, 1010, 10, 10);
         }
-        for (int j = 10; j < 390; j += 20) {
+        for (int j = 10; j < 1010; j += 20) {
             gc.setFill(Color.BURLYWOOD);
             gc.fillRect(0, j, 10, 10);
-            gc.fillRect(590, j, 10, 10);
+            gc.fillRect(1010, j, 10, 10);
         }
 
         // Add the canvas to the game window
@@ -135,7 +135,7 @@ public class Main extends Application {
         root.setBottom(buttonPanel);
 
         // Create the scene and show the window
-        Scene scene = new Scene(root, 600, 450);
+        Scene scene = new Scene(root, 1020, 1200);
         primaryStage.setScene(scene);
         primaryStage.setTitle("CritterScape");
         primaryStage.show();
@@ -149,8 +149,31 @@ public class Main extends Application {
         }
     }
 
+    private void removeCritters(Critter[] critRemove, GraphicsContext gc) {
+    	for(Critter critter : critRemove) {
+        // Get the x and y coordinates of the critter
+        int x = critter.getX() * 10;
+        int y = critter.getY() * 10;
+
+        // Fill a rectangle with the background color at the position of the critter
+        gc.setFill(Color.rgb(0, (int) (100 + noise[x][y] * 100), 0));
+        gc.fillRect(x, y, 10, 10);
+    	}
+    }
+    private void drawCritters(Critter[] critters, GraphicsContext gc) {
+        for (Critter critter : critters) {
+            // Get the x and y coordinates of the critter
+            int x = critter.getX();
+            int y = critter.getY();
+
+            // Draw the critter at its respective position on the canvas
+            gc.setFill(critter.getColor());
+            gc.fillRect(x * 10, y * 10, 10, 10);
+        }
+    }
+    
     public static void main(String[] args) {
         launch(args);
     }
-
 }
+        		

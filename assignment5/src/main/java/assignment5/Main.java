@@ -135,7 +135,7 @@ public class Main extends Application {
         root.setBottom(buttonPanel);
 
         // Create the scene and show the window
-        Scene scene = new Scene(root, 600, 400);
+        Scene scene = new Scene(root, 600, 450);
         primaryStage.setScene(scene);
         primaryStage.setTitle("CritterScape");
         primaryStage.show();

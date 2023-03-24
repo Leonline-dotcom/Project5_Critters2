@@ -4,12 +4,19 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.*;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -20,9 +27,48 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
 
         // Create the game window
-        StackPane gameWindow = new StackPane();
-        gameWindow.setStyle("-fx-background-color: black;");
-        gameWindow.setPrefSize(600, 400);
+        Pane gameWindow = new Pane();
+
+        // Create a canvas for the game view
+        Canvas canvas = new Canvas(600, 400);
+
+        // Get the graphics context for the canvas
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        // Create a noise texture for the grass
+        double[][] noise = new double[(int) canvas.getWidth()][(int) canvas.getHeight()];
+        for (int x = 0; x < canvas.getWidth(); x++) {
+            for (int y = 0; y < canvas.getHeight(); y++) {
+                noise[x][y] = Math.random();
+            }
+        }
+
+        // Loop through the noise texture and draw pixels on the canvas
+        for (int x = 0; x < canvas.getWidth(); x += 5) {
+            for (int y = 0; y < canvas.getHeight(); y += 5) {
+                double value = noise[x][y] * 100;
+                gc.setFill(Color.rgb(0, (int) (100 + value), 0));
+                gc.fillRect(x, y, 5, 5);
+            }
+        }
+
+        // Draw the fence around the edge of the game window
+        gc.setStroke(Color.PERU);
+        gc.setLineWidth(10);
+        gc.strokeRect(0, 0, 600, 400);
+        for (int i = 10; i < 590; i += 20) {
+            gc.setFill(Color.BURLYWOOD);
+            gc.fillRect(i, 0, 10, 10);
+            gc.fillRect(i, 390, 10, 10);
+        }
+        for (int j = 10; j < 390; j += 20) {
+            gc.setFill(Color.BURLYWOOD);
+            gc.fillRect(0, j, 10, 10);
+            gc.fillRect(590, j, 10, 10);
+        }
+
+        // Add the canvas to the game window
+        gameWindow.getChildren().add(canvas);
 
         // Create the stats window
         statsStage = new Stage();
@@ -89,7 +135,7 @@ public class Main extends Application {
         root.setBottom(buttonPanel);
 
         // Create the scene and show the window
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 600, 400);
         primaryStage.setScene(scene);
         primaryStage.setTitle("CritterScape");
         primaryStage.show();

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Arrays;
-
 import java.lang.Math;
 
 /*
@@ -79,7 +78,8 @@ public abstract class Critter {
 
 
     public static void displayWorld(Object pane) {
-        // TODO Implement this method
+       
+    	// TODO Implement this method
     }
 
 	/* END --- NEW FOR PROJECT 5
@@ -90,6 +90,7 @@ public abstract class Critter {
             private int y_coord;
             private Point position;
             private boolean ateSensuBean = false;
+            private boolean isDead = false;
         
             private static String[][] grid = new String[Params.WORLD_WIDTH][Params.WORLD_HEIGHT]; 
         
@@ -161,23 +162,254 @@ public abstract class Critter {
      */
     public static List<Critter> getInstances(String critter_class_name)
             throws InvalidCritterException {
-        // TODO: Complete this method
-        return null;
+    	
+    	try {
+			Class CritterClass = Class.forName(myPackage +"." + critter_class_name);
+			
+			ArrayList<Critter> InstancesOfThis = new ArrayList<>();
+			
+	    	for(Critter i : population) {
+	    		if(CritterClass.isInstance(i)) {
+	    			InstancesOfThis.add(i);
+	    		}
+	    	}
+            return InstancesOfThis;
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			throw new InvalidCritterException(critter_class_name);
+		}
+    	
     }
 
     /**
      * Clear the world of all critters, dead and alive
      */
     public static void clearWorld() {
-        clearGrid();
+        //clearGrid();
         population.clear();
         babies.clear();
         critterLocation.clear();
+
     }
 
     public static void worldTimeStep() {
-        // TODO: Complete this method
+    	if (!deadList.isEmpty()){
+            for (Critter i: deadList){
+                population.remove(i);
+                if(critterLocation.containsKey(i.position)){
+                    critterLocation.get(i.position).remove(i);
+                    if(critterLocation.get(i.position).isEmpty()){
+                        critterLocation.remove(i.position);
+                    } //removing critter from from point's hashSet to add to another point.
+                }
+            }
+            deadList.clear();
+        }
+            //TODO still needs work
+        	while(!babies.isEmpty()) {        //add all babies created in previous time step to population
+        		population.add(babies.get(babies.size()-1));
+        		babies.remove(babies.size()-1);
+        	}
+        	ConflictCoords.clear(); //clean slate of conflict points
+            critterLocation.clear();//cleare slate of  known points
+            for(Critter i: population){
+               
+                i.doTimeStep();
+                i.energy -= Params.REST_ENERGY_COST;
+                if(i.energy <= 0) {
+                    i.isDead=true;
+                    deadList.add(i);}   //kill the critter if it has no energy
+                else {
+                	if(critterLocation.get(i.position) == null){         //if new coordinate has no one else, create new hashset for point
+                		critterLocation.put(i.position, new HashSet<Critter>()); //initialize new set of critters at that position
+                	}
+                	critterLocation.get(i.position).add(i); //add critter to its new positions
+                	if(critterLocation.get(i.position).size() > 1) { //if multiple critters at this point....
+                		ConflictCoords.add(i.position); //track the point as a conflict position
+                	}
+                
+                }
+            }
+
+            if(!ConflictCoords.isEmpty()){
+                doEncounters();
+            }
+            
     }
+    
+    
+    private static void doEncounters() { //setting foundation, not sure how clovers affect this...
+    	//if reaper flag == 1 then critThis is reaper
+            for(Point i : ConflictCoords) {
+                int reaperFlag = 0; 
+                while(critterLocation.get(i).size() >1){
+                    ArrayList<Critter> it = new ArrayList<Critter>(critterLocation.get(i));
+                    Critter critThis = it.get(0);
+                    if(critThis.toString() == "4") { reaperFlag = 1;} 
+                    Critter critThat = it.get(1);
+                        if(reaperFlag == 1) {  //reaper checker 
+                            Eat(critThis, critThat);
+                            Kill(critThat);
+                            
+                        }
+                        else if(critThat.toString() == "4"){ //reaper checker
+                            reaperFlag = 1;
+                            Eat(critThat, critThis);
+                            Kill(critThis);
+                             
+                        }
+                        
+                        else if(isFood(critThis) || isFood(critThat)) { //checks if either critters are food
+                            if(isFood(critThis) && !isFood(critThat)) {
+                                Eat(critThat, critThis);
+                                Kill(critThis);
+                                
+                            }
+                            else if(isFood(critThat) && !isFood(critThis)){
+                                Eat(critThis, critThat);
+                                Kill(critThat);
+                            }
+                            else{// TODO may need case for both being food, but I don't think its possible... 
+                                Eat(critThis, critThat);    
+                                Kill(critThat); //if both are food, just remove/kill the second one
+                            }
+                                
+                        }
+                        
+                        else {   //both critters need to fight n shit
+                            if(critThis.toString() == "2") { //if its a knight
+                                
+                                if(critThis.fight(critThat.toString())) { //if the knight wants to fight the other critter
+                                    if(critThat.fight(critThis.toString())) { //if the other critter want to fight the other knight, must be a knight or a dragon
+                                        boolean val = ((Critter2)critThis).Encounter(critThat); //fight the dragon or knight
+                                        if(val == true) {
+                                            Eat(critThis, critThat);
+                                            Kill(critThat);
+                                        }
+                                        else {
+                                            Eat(critThat, critThis);
+                                            Kill(critThis);
+                                            
+                                        }
+                                    }
+                                    else {
+                                        if(critThat.toString()=="G") { 
+                                            Eat(critThis, critThat);  //knights just kill all goblins
+                                            Kill(critThat);
+                                            ((Critter2)critThis).addPower(1);
+                                        }
+                                    }
+                                }
+                                else {
+                                    Eat(critThat, critThis);
+                                    Kill(critThis);
+                                     //the knight dies, so set other critter to current
+                                }
+                            }
+                            
+                            else if(critThis.toString() == "1") {
+                                boolean val = ((Critter1)critThis).Encounter(critThat); 
+                                if(val == true) {
+                                    Eat(critThis, critThat);
+                                    Kill(critThat);
+                                }
+                                else {
+                                    Eat(critThat, critThis);
+                                    Kill(critThis);
+                                    
+                                }
+                            }
+                            
+                            else if(critThis.toString() == "G") {
+                                if(critThat.toString() == "G") {
+                                    Eat(critThis, critThat);
+                                    Kill(critThat);
+                                }
+                                else {
+                                    Eat(critThat, critThis);
+                                    Kill(critThis);
+                                   
+                                }
+                            }
+                            else {
+                            	if(critThis.fight(critThat.toString())) {
+                            		if(!critThat.fight(critThis.toString())){
+                            			//critThat.run(Critter.getRandomInt(8));
+                            		}
+                            		else {
+                            			Eat(critThis, critThat);
+                            			Kill(critThat);
+                            		}
+                            	}
+                            }
+                        }
+                	}
+            	}
+    		}
+    
+    private static void Kill(Critter critter) {
+    	population.remove(critter);
+    	critterLocation.get(critter.position).remove(critter);
+    }
+
+    
+    private static boolean isFood(Critter critter) {
+    	if(critter.toString() == "?" || critter.toString() == "@") {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    
+    private static void Eat(Critter Eater, Critter Food) { //need to implement
+        Eater.energy += (int) Food.energy/2;
+
+    	if(!Eater.ateSensuBean) {
+    		if(Eater.toString() == "G") {
+    			if(Eater.energy > 100) {Eater.energy = 100;}
+    		}
+    		if(Eater.toString() == "1") {
+    			if(Eater.energy > 400) {Eater.energy = 400;}
+    		}
+            if(Eater.toString() == "2") {
+    			if(Eater.energy > 200) {Eater.energy = 200;}
+    		}
+    	}else if(Eater.ateSensuBean){
+
+            Eater.energy += (int) Food.energy/2;
+    		if(Eater.toString() == "G") {
+    			if(Eater.energy > 250) {Eater.energy = 250;}
+    		}
+    		if(Eater.toString() == "1") {
+    			if(Eater.energy > 550) {Eater.energy = 550;}
+    		}
+            if(Eater.toString() == "2") {
+    			if(Eater.energy > 350) {Eater.energy = 350;}
+    		}
+            if(Eater.toString() == "2") {
+                
+    			Eater.energy = 350;
+                ((Critter2) Eater).addPower(2);
+    		}
+        } 
+        else if (Food.toString() == "3") {
+
+
+            if(Eater.toString() == "G") {
+    			Eater.energy = 250;
+    		}
+    		if(Eater.toString() == "1") {
+    			Eater.energy = 550;
+    		}
+            if(Eater.toString() == "2") {
+    			Eater.energy = 350;
+                ((Critter2) Eater).addPower(2);
+    		}
+
+        }
+        
+    }
+    
 
     public abstract void doTimeStep();
 

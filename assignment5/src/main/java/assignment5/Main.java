@@ -22,6 +22,8 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     private Stage statsStage;
+    
+    private static GraphicsContext gc;
 
     @Override
     public void start(Stage primaryStage) {
@@ -30,10 +32,10 @@ public class Main extends Application {
         Pane gameWindow = new Pane();
 
         // Create a canvas for the game view
-        Canvas canvas = new Canvas(1020, 1020);
+        Canvas canvas = new Canvas(820, 820);
 
         // Get the graphics context for the canvas
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc = canvas.getGraphicsContext2D();
 
         // Create a noise texture for the grass
         double[][] noise = new double[(int) canvas.getWidth()][(int) canvas.getHeight()];
@@ -55,16 +57,16 @@ public class Main extends Application {
         // Draw the fence around the edge of the game window
         gc.setStroke(Color.PERU);
         gc.setLineWidth(10);
-        gc.strokeRect(0, 0, 1020, 1020);
-        for (int i = 10; i < 1010; i += 20) {
+        gc.strokeRect(0, 0, 820, 820);
+        for (int i = 10; i < 810; i += 20) {
             gc.setFill(Color.BURLYWOOD);
             gc.fillRect(i, 0, 10, 10);
-            gc.fillRect(i, 1010, 10, 10);
+            gc.fillRect(i, 810, 10, 10);
         }
-        for (int j = 10; j < 1010; j += 20) {
+        for (int j = 10; j < 810; j += 20) {
             gc.setFill(Color.BURLYWOOD);
             gc.fillRect(0, j, 10, 10);
-            gc.fillRect(1010, j, 10, 10);
+            gc.fillRect(810, j, 10, 10);
         }
 
         // Add the canvas to the game window

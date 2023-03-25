@@ -1,4 +1,4 @@
-package assignment4;
+package assignment5;
 /*The knight class (K)
  * They start with 200 Health
  * They have a Level System: Min=0  Max = 10
@@ -60,4 +60,10 @@ public class Critter2 extends Critter {
     public String toString() {
         return "2";
     }
+
+	@Override
+	public CritterShape viewShape() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

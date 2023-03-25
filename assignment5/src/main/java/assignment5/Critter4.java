@@ -1,6 +1,6 @@
-package assignment4;
+package assignment5;
 
-import assignment4.Critter.TestCritter;
+import assignment5.Critter.TestCritter;
 
 /*The Reaper (R)
  * Will not move from its original position
@@ -22,5 +22,11 @@ public class Critter4 extends TestCritter {
     public String toString() {
         return "4";
     }
+
+	@Override
+	public CritterShape viewShape() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

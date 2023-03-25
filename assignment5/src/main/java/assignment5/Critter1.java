@@ -1,4 +1,4 @@
-package assignment4;
+package assignment5;
 /*The Dragon class (D)
  
  * Starting Health (Energy) is 400
@@ -52,5 +52,11 @@ public class Critter1 extends Critter {
     public String toString() {
         return "1";
     }
+
+	@Override
+	public CritterShape viewShape() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

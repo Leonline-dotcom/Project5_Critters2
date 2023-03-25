@@ -1,6 +1,6 @@
-package assignment4;
+package assignment5;
 
-import assignment4.Critter.TestCritter;
+import assignment5.Critter.TestCritter;
 
 /*The Legendary Sensu Bean
  * When eaten, the individual has their base health recovered + 150
@@ -28,5 +28,11 @@ public class Critter3 extends TestCritter {
     public void doTimeStep() {
         setEnergy(getEnergy() + Params.PHOTOSYNTHESIS_ENERGY_AMOUNT*10);
     }
+
+	@Override
+	public CritterShape viewShape() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

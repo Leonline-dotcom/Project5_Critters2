@@ -2,7 +2,6 @@ package assignment5;
 
 import javafx.animation.*;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -24,13 +23,19 @@ public class MainMenu extends Application {
     private static final int WIDTH = 1280;
     private static final int HEIGHT = 720;
 
-    private List<Pair<String, Runnable>> menuData = Arrays.asList(
-            new Pair<String, Runnable>("Start Game", () -> {}),
-            new Pair<String, Runnable>("Game Options", () -> {}),
-            new Pair<String, Runnable>("Credits", () -> {}),
-            new Pair<String, Runnable>("Exit to Desktop", Platform::exit)
-    );
+    // private List<Pair<String, Runnable>> menuData = Arrays.asList(
+    //         new Pair<String, Runnable>("Start Game", () -> {}),
+    //         new Pair<String, Runnable>("Game Options", () -> {}),
+    //         new Pair<String, Runnable>("Credits", () -> {}),
+    //         new Pair<String, Runnable>("Exit to Desktop", Platform::exit)
+    // );
 
+    private List<Pair<String, String>> menuData1 = Arrays.asList(
+            new Pair<String, String>("Start Game", "() -> {}"),
+            new Pair<String, String>("Game Options", "() -> {}"),
+            new Pair<String, String>("Exit to Desktop", "quit")
+    );
+    private Stage stage;
     private Pane root = new Pane();
     private VBox menuBox = new VBox(-5);
     private Line line;
@@ -67,7 +72,7 @@ public class MainMenu extends Application {
     }
 
     private void addLine(double x, double y) {
-        line = new Line(x, y, x, y + 150);
+        line = new Line(x, y, x, y + 113);
         line.setStrokeWidth(3);
         line.setStroke(Color.BLACK);
         line.setEffect(new DropShadow(5, Color.WHITE));
@@ -96,7 +101,7 @@ public class MainMenu extends Application {
     private void addMenu(double x, double y) {
         menuBox.setTranslateX(x);
         menuBox.setTranslateY(y);
-        menuData.forEach(data -> {
+        menuData1.forEach(data -> {
             MenuItem item = new MenuItem(data.getKey());
             item.setOnAction(data.getValue());
             item.setTranslateX(-300);
@@ -114,11 +119,20 @@ public class MainMenu extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        stage = primaryStage;
         Scene scene = new Scene(createContent());
+        Scene gameScene = GameScene.CreateGameScene();
+        Scene optionsScene = OptionScene.CreateOptionsScene();
+
         primaryStage.setTitle("Critter Main Menu");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+    // Switch Scenes in single Stage
+	public void switchScenes(Scene scene) {
+		stage.setScene(scene);
+	}
 
     public static void main(String[] args) {
         launch(args);

@@ -1,6 +1,8 @@
 package assignment5;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.event.EventHandler;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
@@ -50,7 +52,19 @@ public class MenuItem extends Pane {
         getChildren().addAll(bg, text);
     }
 
-    public void setOnAction(Runnable action) {
-        setOnMouseClicked(e -> action.run());
+
+    public void setOnAction(String string) {
+        setOnMouseClicked(e -> action(string));
+
     }
+
+    public static void action(String String){
+        // TODO MOD TO FIT A SCENE SWITH FOR GAME AND  PARAM
+        if(String.equals("quit")){
+            Platform.exit();
+        }
+        System.out.println("did it bois");
+    }
+
+
 }

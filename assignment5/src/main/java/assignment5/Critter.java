@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+
 import java.util.Arrays;
 import java.lang.Math;
 
@@ -39,7 +41,7 @@ public abstract class Critter {
         SQUARE,
         TRIANGLE,
         DIAMOND,
-        STAR
+        STAR 
     }
 
     /* the default color is white, which I hope makes critters invisible by default
@@ -90,7 +92,7 @@ public abstract class Critter {
             private int y_coord;
             private Point position;
             private boolean ateSensuBean = false;
-            private boolean isDead = false;
+            private boolean isDead;
         
             private static String[][] grid = new String[Params.WORLD_WIDTH][Params.WORLD_HEIGHT]; 
         
@@ -143,10 +145,10 @@ public abstract class Critter {
 			critterLocation.put(NewCritter.position, new HashSet<Critter>());
 			}
 			critterLocation.get(NewCritter.position).add(NewCritter);
-			// TODO Auto-generated catch block
+			
 		} 
     	catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			throw new InvalidCritterException(critter_class_name);
 		}
     	
@@ -175,7 +177,7 @@ public abstract class Critter {
 	    	}
             return InstancesOfThis;
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			throw new InvalidCritterException(critter_class_name);
 		}
     	
@@ -185,11 +187,10 @@ public abstract class Critter {
      * Clear the world of all critters, dead and alive
      */
     public static void clearWorld() {
-        //clearGrid();
-        population.clear();
-        babies.clear();
-        critterLocation.clear();
-
+    	// clearGrid();
+         population.clear();
+         babies.clear();
+         critterLocation.clear();
     }
 
     public static void worldTimeStep() {
@@ -499,12 +500,5 @@ public abstract class Critter {
         protected static List<Critter> getBabies() {
             return babies;
         }
-    }
-
-    private static void clearGrid(){
-        for( String[] row : grid){
-            Arrays.fill(row, " ");
-        }
-
     }
 }

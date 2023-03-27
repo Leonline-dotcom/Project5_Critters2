@@ -3,6 +3,7 @@ package assignment5;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
@@ -19,6 +20,9 @@ public class MenuItem extends Pane {
 
     private Effect shadow = new DropShadow(5, Color.BLACK);
     private Effect blur = new BoxBlur(1, 1, 3);
+
+    static Scene gameScene;
+    static Scene optionsScene;
 
     public MenuItem(String name) {
         Polygon bg = new Polygon(
@@ -58,12 +62,23 @@ public class MenuItem extends Pane {
 
     }
 
-    public static void action(String String){
+    public static void action(String cmd){
         // TODO MOD TO FIT A SCENE SWITH FOR GAME AND  PARAM
-        if(String.equals("quit")){
-            Platform.exit();
+        switch (cmd) {
+            case "game":
+            gameScene = GameScene.CreateGameScene();
+            MainMenu.switchScenes(gameScene);
+                break;
+
+            case "options":
+            optionsScene = OptionScene.CreateOptionsScene();
+            MainMenu.switchScenes(optionsScene);
+                break;
+        
+            default:
+                Platform.exit();
+                break;
         }
-        System.out.println("did it bois");
     }
 
 

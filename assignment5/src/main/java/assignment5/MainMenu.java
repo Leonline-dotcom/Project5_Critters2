@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,27 +21,25 @@ import java.util.Arrays;
 import java.util.List;
 public class MainMenu extends Application {
 
-    private static final int WIDTH = 1280;
-    private static final int HEIGHT = 720;
+    private static final int WIDTH = 600;
+    private static final int HEIGHT = 400;
 
-    // private List<Pair<String, Runnable>> menuData = Arrays.asList(
-    //         new Pair<String, Runnable>("Start Game", () -> {}),
-    //         new Pair<String, Runnable>("Game Options", () -> {}),
-    //         new Pair<String, Runnable>("Credits", () -> {}),
-    //         new Pair<String, Runnable>("Exit to Desktop", Platform::exit)
-    // );
-
-    private List<Pair<String, String>> menuData1 = Arrays.asList(
-            new Pair<String, String>("Start Game", "() -> {}"),
-            new Pair<String, String>("Game Options", "() -> {}"),
+    private static List<Pair<String, String>> menuData1 = Arrays.asList(
+            new Pair<String, String>("Start Game", "game"),
+            new Pair<String, String>("Game Options", "options"),
             new Pair<String, String>("Exit to Desktop", "quit")
     );
-    private Stage stage;
-    private Pane root = new Pane();
-    private VBox menuBox = new VBox(-5);
-    private Line line;
+    
+    private static Stage stage;
+    private static Scene main;
+    private static Pane root = new Pane();
+    private static VBox menuBox = new VBox(-5);
+    private  static Line line;
 
-    private Parent createContent() {
+   
+
+
+    private static Parent createContent() {
         addBackground();
         addTitle();
 
@@ -55,15 +54,15 @@ public class MainMenu extends Application {
         return root;
     }
 
-    private void addBackground() {
-        ImageView imageView = new ImageView(new Image(getClass().getResource("res/background.jpg").toExternalForm()));
+    private static void addBackground() {
+        ImageView imageView = new ImageView(new Image(MainMenu.class.getResource("res/background.jpg").toExternalForm()));
         imageView.setFitWidth(WIDTH);
         imageView.setFitHeight(HEIGHT);
 
         root.getChildren().add(imageView);
     }
 
-    private void addTitle() {
+    private static void addTitle() {
         MainTitle title = new MainTitle("CRITTERVERSE");
         title.setTranslateX(WIDTH / 2 - title.getTitleWidth() / 2);
         title.setTranslateY(HEIGHT / 3);
@@ -71,7 +70,7 @@ public class MainMenu extends Application {
         root.getChildren().add(title);
     }
 
-    private void addLine(double x, double y) {
+    private static void addLine(double x, double y) {
         line = new Line(x, y, x, y + 113);
         line.setStrokeWidth(3);
         line.setStroke(Color.BLACK);
@@ -81,7 +80,7 @@ public class MainMenu extends Application {
         root.getChildren().add(line);
     }
 
-    private void startAnimation() {
+    private static void startAnimation() {
         ScaleTransition st = new ScaleTransition(Duration.seconds(1), line);
         st.setToY(1);
         st.setOnFinished(e -> {
@@ -98,7 +97,7 @@ public class MainMenu extends Application {
         st.play();
     }
 
-    private void addMenu(double x, double y) {
+    private static void addMenu(double x, double y) {
         menuBox.setTranslateX(x);
         menuBox.setTranslateY(y);
         menuData1.forEach(data -> {
@@ -120,19 +119,20 @@ public class MainMenu extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         stage = primaryStage;
-        Scene scene = new Scene(createContent());
-        Scene gameScene = GameScene.CreateGameScene();
-        Scene optionsScene = OptionScene.CreateOptionsScene();
-
-        primaryStage.setTitle("Critter Main Menu");
-        primaryStage.setScene(scene);
+        main = new Scene(createContent());
+        primaryStage.setTitle("Critter Game");
+        primaryStage.setScene(main);
         primaryStage.show();
     }
 
     // Switch Scenes in single Stage
-	public void switchScenes(Scene scene) {
+	public static void switchScenes(Scene scene) {
 		stage.setScene(scene);
 	}
+
+    public static  Scene getMainScene(){
+        return main;
+    }
 
     public static void main(String[] args) {
         launch(args);

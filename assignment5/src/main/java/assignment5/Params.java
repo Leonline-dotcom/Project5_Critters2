@@ -22,6 +22,5 @@ public class Params {
     public static int REFRESH_CLOVER_COUNT = 10;
     public static int PHOTOSYNTHESIS_ENERGY_AMOUNT = 1;
     public static int START_ENERGY = 100;
-
     public static int LOOK_ENERGY_COST = 1;
 }

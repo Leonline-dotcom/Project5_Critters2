@@ -13,6 +13,9 @@ package assignment5;
  * 
  * 
  */
+
+import javafx.scene.paint.Color;
+
 public class Critter1 extends Critter {
 
     @Override
@@ -20,13 +23,17 @@ public class Critter1 extends Critter {
         int chance =Critter.getRandomInt(11);
         int direction = Critter.getRandomInt(8);
         if(this.getEnergy() >= Params.MIN_REPRODUCE_ENERGY && (chance <= 4)) {
-    		Critter baby = new Critter2();
-    		reproduce(baby, Critter.getRandomInt(8));
+    		//Critter baby = new Critter1();
+    	//	reproduce(baby, Critter.getRandomInt(8));
     	}
     	else if(chance > 4 ){ 
+    		
+                   // run(direction);
                     run(direction);
-                    run(direction);}
-    	else {walk(direction);} 
+                    }
+    	else {
+    		walk(direction);
+    	} 
     }
 
     @Override
@@ -56,7 +63,16 @@ public class Critter1 extends Critter {
 	@Override
 	public CritterShape viewShape() {
 		// TODO Auto-generated method stub
-		return null;
+		return CritterShape.DIAMOND;
+	}
+	
+	@Override
+	public Color viewColor() {
+		return Color.RED;
 	}
     
+	@Override
+	public Color viewOutlineColor() {
+		return Color.BLACK;
+	}
 }

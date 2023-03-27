@@ -1,6 +1,7 @@
 package assignment5;
 
 import assignment5.Critter.TestCritter;
+import javafx.scene.paint.Color;
 
 /*The Reaper (R)
  * Will not move from its original position
@@ -26,7 +27,16 @@ public class Critter4 extends TestCritter {
 	@Override
 	public CritterShape viewShape() {
 		// TODO Auto-generated method stub
-		return null;
+		return CritterShape.STAR;
 	}
     
+	@Override
+	public Color viewColor() {
+		return Color.BLACK;
+	}
+	
+	@Override
+	public Color viewOutlineColor() {
+		return Color.RED;
+	}
 }

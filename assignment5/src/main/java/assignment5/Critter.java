@@ -21,14 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import assignment4.Critter;
-import assignment4.Critter1;
-import assignment4.Critter2;
-import assignment4.InvalidCritterException;
-import assignment4.Params;
-
 import java.util.Arrays;
-import java.awt.Point;
 import java.lang.Math;
 
 /*
@@ -78,18 +71,41 @@ public abstract class Critter {
     protected final String look(int direction, boolean steps) {
         return "";
     }
-
     public static String runStats(List<Critter> critters) {
-        // TODO Implement this method
-        return null;
-    }
+    	String output = " ";
+    	output = output + "" + critters.size() + " critters as follows -- ";
+    
+         Map<String, Integer> critter_count = new HashMap<String, Integer>();
+         for (Critter crit : critters) {
+             String crit_string = crit.toString();
+             critter_count.put(crit_string,
+                     critter_count.getOrDefault(crit_string, 0) + 1);
+         }
+         String prefix = "";
+         for (String s : critter_count.keySet()) {
+             output = output + prefix + s + ":" + critter_count.get(s);
+           
+             prefix = ", ";
+         }
+         
+         return output;
+     }
+    
+    
+    	private static Point[][] pointGrid = new Point[Params.WORLD_WIDTH][Params.WORLD_HEIGHT];
+    
 
 
     public static void displayWorld(Object pane) {
        
     	// TODO Implement this method
-    }
+    	Main.removeCritters();
+    	for(Critter critter:population) {
+    		
 
+        	Main.drawCritter(critter, critter.position.getX(), critter.position.gety());
+        }
+    }
 	/* END --- NEW FOR PROJECT 5
 			rest is unchanged from Project 4 */
 
@@ -98,22 +114,28 @@ public abstract class Critter {
             private int y_coord;
             private Point position;
             private boolean ateSensuBean = false;
+			private boolean isDead;
+			private String pointString;
         
             private static String[][] grid = new String[Params.WORLD_WIDTH][Params.WORLD_HEIGHT]; 
-        
+       
             private static List<Critter> population = new ArrayList<Critter>();
             private static List<Critter> babies = new ArrayList<Critter>();
             private static ArrayList<Critter> deadList = new ArrayList<>();
             
-            private static Map<Point, HashSet<Critter>> critterLocation = new HashMap<>(); //name is not exactly correct, a point with values could only contain 1 critter, thus no conflict
-            private static HashSet<Point> ConflictCoords = new HashSet<>(); //this ONLY contains coords with 2 or more critters
+            
+            private static Map<String, HashSet<Critter>> critterLocation = new HashMap<>(); //name is not exactly correct, a point with values could only contain 1 critter, thus no conflict
+            private static HashSet<String> ConflictCoords = new HashSet<>(); //this ONLY contains coords with 2 or more critters
         
+            
+            
     /* Gets the package name.  This assumes that Critter and its
      * subclasses are all in the same package. */
     private static String myPackage;
 
     static {
         myPackage = Critter.class.getPackage().toString().split(" ")[1];
+        
     }
 
     private static Random rand = new Random();
@@ -143,13 +165,16 @@ public abstract class Critter {
 			Critter NewCritter = (Critter) CritterClass.newInstance(); 
 			NewCritter.x_coord = Critter.getRandomInt(Params.WORLD_WIDTH);
 			NewCritter.y_coord = Critter.getRandomInt(Params.WORLD_HEIGHT);
+			
+		
             NewCritter.position = new Point(NewCritter.x_coord, NewCritter.y_coord);
+            NewCritter.setPointString(NewCritter);
 			NewCritter.energy = Params.START_ENERGY;
 			population.add(NewCritter);
-			if(!critterLocation.containsKey(NewCritter.position)) {
-			critterLocation.put(NewCritter.position, new HashSet<Critter>());
+			if(!critterLocation.containsKey(NewCritter.pointString)) {
+			critterLocation.put(NewCritter.pointString, new HashSet<Critter>());
 			}
-			critterLocation.get(NewCritter.position).add(NewCritter);
+			critterLocation.get(NewCritter.pointString).add(NewCritter);
 			// TODO Auto-generated catch block
 		} 
     	catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
@@ -197,15 +222,19 @@ public abstract class Critter {
          babies.clear();
          critterLocation.clear();
     }
+    
+    private void setPointString(Critter critter) {
+    	critter.pointString = ((Integer)critter.position.getX()).toString() + ((Integer)critter.position.gety()).toString();
+    }
 
     public static void worldTimeStep() {
     	if (!deadList.isEmpty()){
             for (Critter i: deadList){
                 population.remove(i);
-                if(critterLocation.containsKey(i.position)){
-                    critterLocation.get(i.position).remove(i);
-                    if(critterLocation.get(i.position).isEmpty()){
-                        critterLocation.remove(i.position);
+                if(critterLocation.containsKey(i.pointString)){
+                    critterLocation.get(i.pointString).remove(i);
+                    if(critterLocation.get(i.pointString).isEmpty()){
+                        critterLocation.remove(i.pointString);
                     } //removing critter from from point's hashSet to add to another point.
                 }
             }
@@ -218,26 +247,34 @@ public abstract class Critter {
         	}
         	ConflictCoords.clear(); //clean slate of conflict points
             critterLocation.clear();//cleare slate of  known points
+            
             for(Critter i: population){
-               
+            	
                 i.doTimeStep();
+                i.setPointString(i);
+                
+                
+                if(critterLocation.containsKey(i.pointString)) {
+                	System.out.println("true");}
+
                 i.energy -= Params.REST_ENERGY_COST;
                 if(i.energy <= 0) {
                     i.isDead=true;
                     deadList.add(i);}   //kill the critter if it has no energy
                 else {
-                	if(critterLocation.get(i.position) == null){         //if new coordinate has no one else, create new hashset for point
-                		critterLocation.put(i.position, new HashSet<Critter>()); //initialize new set of critters at that position
+                	if(critterLocation.get(i.pointString) == null){         //if new coordinate has no one else, create new hashset for point
+                		critterLocation.put(i.pointString, new HashSet<Critter>()); //initialize new set of critters at that position
                 	}
-                	critterLocation.get(i.position).add(i); //add critter to its new positions
-                	if(critterLocation.get(i.position).size() > 1) { //if multiple critters at this point....
-                		ConflictCoords.add(i.position); //track the point as a conflict position
+                	critterLocation.get(i.pointString).add(i); //add critter to its new positions
+                	if(critterLocation.get(i.pointString).size() > 1) { //if multiple critters at this point....
+                		ConflictCoords.add(i.pointString); //track the point as a conflict position
                 	}
                 
                 }
             }
 
             if(!ConflictCoords.isEmpty()){
+            	System.out.println("conflicting");
                 doEncounters();
             }
             
@@ -246,7 +283,7 @@ public abstract class Critter {
     
     private static void doEncounters() { //setting foundation, not sure how clovers affect this...
     	//if reaper flag == 1 then critThis is reaper
-            for(Point i : ConflictCoords) {
+            for(String i : ConflictCoords) {
                 int reaperFlag = 0; 
                 while(critterLocation.get(i).size() >1){
                     ArrayList<Critter> it = new ArrayList<Critter>(critterLocation.get(i));
@@ -355,7 +392,7 @@ public abstract class Critter {
     
     private static void Kill(Critter critter) {
     	population.remove(critter);
-    	critterLocation.get(critter.position).remove(critter);
+    	critterLocation.get(critter.pointString).remove(critter);
     }
 
     

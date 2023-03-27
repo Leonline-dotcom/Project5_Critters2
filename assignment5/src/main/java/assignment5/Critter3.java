@@ -1,6 +1,7 @@
 package assignment5;
 
 import assignment5.Critter.TestCritter;
+import javafx.scene.paint.Color;
 
 /*The Legendary Sensu Bean
  * When eaten, the individual has their base health recovered + 150
@@ -32,7 +33,12 @@ public class Critter3 extends TestCritter {
 	@Override
 	public CritterShape viewShape() {
 		// TODO Auto-generated method stub
-		return null;
+		return CritterShape.DIAMOND;
+	}
+	
+	@Override
+	public Color viewColor() {
+		return Color.AZURE;
 	}
     
 }

@@ -25,6 +25,7 @@ public class Critter2 extends Critter {
     public boolean fight(String opponent) {
     	if(this.getEnergy() < 100 && opponent == "1") {
     		//run(Critter.getRandomInt(8));
+    		String Useful = this.look(Critter.getRandomInt(8), false);
     		return false;
     	}
     	else

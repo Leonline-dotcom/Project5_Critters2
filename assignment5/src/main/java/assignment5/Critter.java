@@ -17,6 +17,7 @@ package assignment5;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -69,7 +70,57 @@ public abstract class Critter {
     public abstract CritterShape viewShape();
 
     protected final String look(int direction, boolean steps) {
-        return "";
+    	int stepAmount = 1;
+    
+    	int x = this.x_coord;
+		int y =this.y_coord;
+		this.energy-=Params.LOOK_ENERGY_COST;
+		if(steps) { stepAmount = 2;}
+		switch (direction) {
+        case 0:
+            x += stepAmount;
+            break;
+        case 1:
+            x += stepAmount;
+            y += stepAmount;
+            break;
+        case 2:
+            y += stepAmount;
+            break;
+        case 3:
+            x -= stepAmount;
+            y += stepAmount;
+            break;
+        case 4:
+            x -= stepAmount;
+            break;
+        case 5:
+            x -= stepAmount;
+            y -= stepAmount;
+            break;
+        case 6:
+            y -= stepAmount;
+            break;
+        case 7:
+            x += stepAmount;
+            y -= stepAmount;
+            break;
+
+        default:
+            break;
+			
+		}
+		
+		String coord = ((Integer)x).toString() + ((Integer)y).toString();
+		if(critterLocation.containsKey(coord)) {
+			if(critterLocation.get(coord) != null) {
+			Iterator<Critter> it = critterLocation.get(coord).iterator();
+			if(it.hasNext()) {
+				return it.next().toString();
+				}
+			}
+		}
+        return null;
     }
     public static String runStats(List<Critter> critters) {
     	String output = " ";
@@ -397,7 +448,7 @@ public abstract class Critter {
 
     
     private static boolean isFood(Critter critter) {
-    	if(critter.toString() == "?" || critter.toString() == "@") {
+    	if(critter.toString() == "3" || critter.toString() == "@") {
     		return true;
     	}
     	return false;

@@ -15,7 +15,7 @@ public class Critter3 extends TestCritter {
     public static int REFRESH_SENSU__BEAN_COUNT = 1;
 
     public String toString() {
-        return "4";
+        return "3";
     }
 
     public boolean fight(String enemy) {
@@ -38,7 +38,7 @@ public class Critter3 extends TestCritter {
 	
 	@Override
 	public Color viewColor() {
-		return Color.AZURE;
+		return Color.BLUEVIOLET;
 	}
     
 }

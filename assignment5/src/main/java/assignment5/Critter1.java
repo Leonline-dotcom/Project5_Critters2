@@ -22,6 +22,7 @@ public class Critter1 extends Critter {
     public void doTimeStep() {
         int chance =Critter.getRandomInt(11);
         int direction = Critter.getRandomInt(8);
+        String useless = this.look(direction, false);
         if(this.getEnergy() >= Params.MIN_REPRODUCE_ENERGY && (chance <= 4)) {
     		//Critter baby = new Critter1();
     	//	reproduce(baby, Critter.getRandomInt(8));

@@ -1,5 +1,8 @@
 package assignment5;
 
+import java.io.*;
+import java.lang.reflect.Modifier;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +38,8 @@ import javafx.util.Duration;
 
 
 public class Main extends Application {
-
+	
+	public static Scene GameScene;
     private Stage statsStage;
     
     private static GraphicsContext gc;
@@ -47,17 +51,18 @@ public class Main extends Application {
     private static int StartStepAmount;
     private static int StepStepAmount;
     private static boolean running;
-    
+    private static BorderPane root;
+   
     
     
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws ClassNotFoundException, URISyntaxException {
 
         // Create the game window
         gameWindow = new Pane();
 
         // Create a canvas for the game view
-        Canvas canvas = new Canvas(820, 820);
+        Canvas canvas = new Canvas(835, 835);
 
         // Get the graphics context for the canvas
         gc = canvas.getGraphicsContext2D();
@@ -108,7 +113,11 @@ public class Main extends Application {
         
         ChoiceBox<String> statsChoice = new ChoiceBox();
         statsChoice.setPrefWidth(300);
-        statsChoice.getItems().addAll("Critter1", "Critter2");
+        ArrayList<String> critTypes = critterTypes();
+        for(int i = 0; i < critTypes.size();i++) {
+        	statsChoice.getItems().add(critTypes.get(i));
+        }
+      //  statsChoice.getItems().addAll("Critter1", "Critter2", "Critter3", "Critter4");
         statsChoice.setValue("Choose type:");
         statsChoice.setOnAction(e -> {
 			try {
@@ -185,7 +194,10 @@ public class Main extends Application {
         ChoiceBox<String> createChoiceBox1 = new ChoiceBox<>();
         //TODO
         //make it choose from array of available critter classes
-        createChoiceBox1.getItems().addAll("Critter1", "Critter2");
+        for(int i = 0; i < critTypes.size();i++) {
+        	createChoiceBox1.getItems().add(critTypes.get(i));
+        }
+       // createChoiceBox1.getItems().addAll("Critter1", "Critter2", "Critter3", "Critter4");
         createChoiceBox1.setValue("Type");
         //sets the type of critter variable critType
         createChoiceBox1.setOnAction(e-> critType = createChoiceBox1.getValue().toString());
@@ -222,18 +234,22 @@ public class Main extends Application {
         buttonPanel.setPadding(new Insets(10));
 
         // Create the main layout
-        BorderPane root = new BorderPane();
+        root = new BorderPane();
         root.setCenter(gameWindow);
         root.setBottom(buttonPanel);
         
        
         
         // Create the scene and show the window
-        Scene scene = new Scene(root, 820,950);
-        primaryStage.setScene(scene);
+         GameScene = new Scene(root, 835,950);
+        primaryStage.setScene(GameScene);
         primaryStage.setTitle("CritterScape");
         primaryStage.show();
        
+    }
+    
+    public static Scene getGameScene() {
+    	return GameScene;
     }
 
     private void toggleStatsWindow() {
@@ -269,7 +285,7 @@ public class Main extends Application {
     		CritterShapes.add(circle);
     	}
     	if(shape == CritterShape.SQUARE) {
-    		Shape square = new Rectangle(x*8, y*8, 10, 10);
+    		Shape square = new Rectangle(x*8, y*8, 9, 9);
     		square.setFill(critter.viewFillColor());
     		square.setStroke(critter.viewOutlineColor());
     		gameWindow.getChildren().add(square);
@@ -329,7 +345,6 @@ public class Main extends Application {
         // Create a new Timeline object and add the KeyFrame to it
         animation = new Timeline(keyFrame);
 
-        // Set the cycle count to INDEFINITE to make the animation run forever
         animation.setCycleCount(Timeline.INDEFINITE);
 
         // Start the animation
@@ -354,7 +369,21 @@ public class Main extends Application {
 		
     }
     
-    
+    private static ArrayList<String> critterTypes() throws URISyntaxException, ClassNotFoundException {
+		ArrayList<String> critterTypes = new ArrayList<String>();
+		File dir = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+		String pkg = Main.class.getPackage().toString().split(" ")[1];
+		dir = new File(dir.getAbsolutePath() + "/" + pkg);
+		String [] lfile = dir.list();
+		for (int i = 0;i < lfile.length; i++) {
+			if(!(lfile[i].substring(lfile[i].length() - 6, lfile[i].length()).equals(".class"))) { continue; }
+			if((Class.forName(pkg + ".Critter").isAssignableFrom(Class.forName(pkg + "." + lfile[i].substring(0, lfile[i].length() - 6))))
+					&& !(Modifier.isAbstract(Class.forName(pkg + "." + lfile[i].substring(0, lfile[i].length() - 6)).getModifiers()))) {
+				critterTypes.add(lfile[i].substring(0, lfile[i].length() - 6));
+			}
+		}
+		return critterTypes;
+	}
     
     public static void main(String[] args) {
         launch(args);
